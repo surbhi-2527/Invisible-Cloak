@@ -1,97 +1,78 @@
 # Invisible-Cloak
 
-Invisible Black Cloak – OpenCV Project
+Invisible Cloak using OpenCV – Aqua/Mint Cloth Detection
 
-A simple invisibility cloak effect built using Python and OpenCV.
-The program detects pure black cloth in video frames and replaces the cloth area with a captured background, creating an illusion of invisibility.
+A simple invisibility cloak effect built using Python and OpenCV, where the program detects a mint/aqua-colored cloth and replaces that region with the pre-captured background — creating a clean and fun invisibility illusion.
 
 📌 How It Works
+1️⃣ Background Capture
 
-The camera first captures a clean background without the user.
+At the beginning, the program captures several frames without the user to build a clean background.
+This background later replaces the cloak region to create the invisibility effect.
 
-In each frame, the program detects black cloth using color + light-based filters.
+2️⃣ Color-Based Cloak Detection
 
-The detected region is replaced with the background, making the cloak appear invisible.
+The system works by detecting a specific mint–aqua color range in each video frame.
+It uses simple but effective HSV color thresholding, along with blur and morphological operations to clean noise.
 
-📂 Functions Explained
-1. capture_background(cap, num_frames=40)
+3️⃣ Replacing the Cloak With Background
 
-Captures multiple frames of the background and computes the median of all frames.
-This produces a clean, stable background image without noise.
+Wherever the cloth is detected, the pixel area is replaced by the previously captured background frame — making it appear as if the cloth (and whatever is behind it) has vanished.
 
-Purpose:
-✔ Helps in creating the invisibility effect
-✔ Removes flicker by using many frames
-✔ Ensures background is steady even with slight camera noise
+📂 Functions / Logic Explained
+🔹 Background Capture
 
-2. generate_black_cloak_mask(frame)
+A loop captures ~30 frames and stores the last one as the stable background.
 
-Creates a mask of the black cloth so the program knows which area to hide.
+🔹 Mint–Aqua Cloth Mask
 
-This function uses multiple techniques:
+Converts frame to HSV
 
-HSV strict black range
-Detects very dark colors precisely.
+Applies Gaussian blur to soften edges
 
-LAB L-channel thresholding
-Identifies dark regions even under shadows.
+Uses two HSV ranges to detect:
 
-Edge suppression
-Removes thin edges (hair, beard, objects) so they don’t trigger false detection.
+Standard mint-aqua tones
 
-Noise removal & smoothing
-Uses bilateral filter, Gaussian blur, and morphological operations to produce a clean mask.
+Lighter mint variations
 
-Purpose:
-✔ Detect black cloak accurately
-✔ Avoid false positives
-✔ Keep cloak shape stable even with folds and wrinkles
+Combines both masks
 
-3. apply_invisibility_effect(frame, mask, background)
+Removes noise using morphological opening
 
-Applies the invisibility effect by blending:
+🔹 Invisibility Effect
 
-The visible part of the frame
+Detected cloak pixels are replaced:
 
-The background inside the cloak area
+frame[cloak_mask == 255] = background[cloak_mask == 255]
 
-Steps:
+🔹 Final Display
 
-Softens mask with Gaussian blur (smooth edges)
-
-Inverts mask to keep non-cloak areas visible
-
-Replaces cloak area with background
-
-Purpose:
-✔ Makes cloak disappear
-✔ Smooth & clean visual output
-
-4. main()
-
-Controls the entire program:
-
-Opens the webcam
-
-Captures the background using capture_background()
-
-Continuously reads camera frames
-
-Generates cloak mask using generate_black_cloak_mask()
-
-Applies invisibility using apply_invisibility_effect()
-
-Displays final output
-
-Quits on pressing Q
+The processed frame is shown in real time.
+Press ESC to exit.
 
 ▶️ Running the Program
 
-Make sure dependencies are installed:
+Install dependencies:
 
 pip install opencv-python numpy
 
 
-Run:
+Run the script:
+
+python main.py
+
+
+Technologies Used:
+
+Python
+
+OpenCV (cv2)
+
+NumPy
+
+HSV Image Processing
+
+Background Substitution
 
 python main.py
